@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>57156047199-ukqas8ebo8k0mnse42jd6uretdgptrnc.apps.googleusercontent.com</string>
+	<string></string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.57156047199-ukqas8ebo8k0mnse42jd6uretdgptrnc</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDJs61ht-xEkWD92l-8PET8nG27iVj4sgg</string>
+	<string></string>
 	<key>GCM_SENDER_ID</key>
-	<string>57156047199</string>
+	<string></string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.collectionApp</string>
+	<string></string>
 	<key>PROJECT_ID</key>
-	<string>mycollection-1767c</string>
+	<string></string>
 	<key>STORAGE_BUCKET</key>
-	<string>mycollection-1767c.firebasestorage.app</string>
+	<string></string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
