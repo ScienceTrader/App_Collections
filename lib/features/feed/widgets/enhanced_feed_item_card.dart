@@ -7,11 +7,13 @@ import '../controllers/feed_controller.dart';
 import '../../sharing/controllers/share_controller.dart';
 import '../../social/controllers/social_controller.dart';
 import '../../auth/controllers/auth_controller.dart';
+import '../../profile/screens/other_user_profile_screen.dart';
+import '../../../app/routes.dart';
 
 class EnhancedFeedItemCard extends StatelessWidget {
   final FeedItemModel feedItem;
 
-  const EnhancedFeedItemCard({Key? key, required this.feedItem}) : super(key: key);
+  const EnhancedFeedItemCard({super.key, required this.feedItem});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,9 @@ class EnhancedFeedItemCard extends StatelessWidget {
                       GestureDetector(
                         onTap: () => _showUserProfile(),
                         child: Text(
-                          feedItem.user.username ?? feedItem.user.email ?? 'Usuário',
+                          feedItem.user.username ??
+                              feedItem.user.email ??
+                              'Usuário',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -67,20 +71,28 @@ class EnhancedFeedItemCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 // Follow Button
                 Obx(() {
-                  final isCurrentUser = AuthController.to.currentUser.value?.id == feedItem.user.id;
+                  final isCurrentUser =
+                      AuthController.to.currentUser.value?.id ==
+                          feedItem.user.id;
                   if (isCurrentUser) return SizedBox();
-                  
-                  final isFollowing = SocialController.to.followingStatus[feedItem.user.id] ?? false;
-                  
+
+                  final isFollowing =
+                      SocialController.to.followingStatus[feedItem.user.id] ??
+                          false;
+
                   return ElevatedButton(
                     onPressed: isFollowing
-                        ? () => SocialController.to.unfollowUser(feedItem.user.id!)
-                        : () => SocialController.to.followUser(feedItem.user.id!),
+                        ? () =>
+                            SocialController.to.unfollowUser(feedItem.user.id!)
+                        : () =>
+                            SocialController.to.followUser(feedItem.user.id!),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isFollowing ? Colors.grey : Theme.of(context).primaryColor,
+                      backgroundColor: isFollowing
+                          ? Colors.grey
+                          : Theme.of(context).primaryColor,
                       minimumSize: Size(70, 32),
                     ),
                     child: Text(
@@ -89,7 +101,7 @@ class EnhancedFeedItemCard extends StatelessWidget {
                     ),
                   );
                 }),
-                
+
                 // More Options
                 PopupMenuButton<String>(
                   onSelected: (value) => _handleMenuAction(value),
@@ -185,35 +197,36 @@ class EnhancedFeedItemCard extends StatelessWidget {
                   children: [
                     // Like Button
                     Obx(() => GestureDetector(
-                      onTap: () => FeedController.to.toggleLike(feedItem),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            feedItem.isLikedByCurrentUser
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: feedItem.isLikedByCurrentUser
-                                ? Colors.red
-                                : Colors.grey.shade600,
-                            size: 24,
+                          onTap: () => FeedController.to.toggleLike(feedItem),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                feedItem.isLikedByCurrentUser
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: feedItem.isLikedByCurrentUser
+                                    ? Colors.red
+                                    : Colors.grey.shade600,
+                                size: 24,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                '${feedItem.likesCount}',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 8),
-                          Text(
-                            '${feedItem.likesCount}',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                        )),
                     SizedBox(width: 24),
 
                     // Comment Button
                     GestureDetector(
-                      onTap: () => FeedController.to.showCommentsBottomSheet(feedItem),
+                      onTap: () =>
+                          FeedController.to.showCommentsBottomSheet(feedItem),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -233,12 +246,13 @@ class EnhancedFeedItemCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     Spacer(),
-                    
+
                     // Share Button
                     GestureDetector(
-                      onTap: () => ShareController.to.showShareBottomSheet(feedItem.item, feedItem.user),
+                      onTap: () => ShareController.to
+                          .showShareBottomSheet(feedItem.item, feedItem.user),
                       child: Icon(
                         Icons.share_outlined,
                         color: Colors.grey.shade600,
@@ -247,7 +261,7 @@ class EnhancedFeedItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 SizedBox(height: 12),
 
                 // Item Details
@@ -280,7 +294,7 @@ class EnhancedFeedItemCard extends StatelessWidget {
     // Double tap to like
     if (!feedItem.isLikedByCurrentUser) {
       FeedController.to.toggleLike(feedItem);
-      
+
       // Show heart animation
       Get.dialog(
         AlertDialog(
@@ -296,7 +310,7 @@ class EnhancedFeedItemCard extends StatelessWidget {
         ),
         barrierDismissible: true,
       );
-      
+
       // Auto dismiss after 1 second
       Future.delayed(Duration(seconds: 1), () {
         if (Get.isDialogOpen ?? false) {
@@ -308,6 +322,21 @@ class EnhancedFeedItemCard extends StatelessWidget {
 
   void _showUserProfile() {
     // TODO: Navigate to user profile
+    final userId = feedItem.user.id;
+    final currentUserId = AuthController.to.currentUser.value?.id;
+
+    // Verificar se é o próprio usuário
+    if (userId == currentUserId) {
+      // Navegar para o próprio perfil
+      Get.toNamed(AppRoutes.profile);
+    } else {
+      // Navegar para perfil de outro usuário
+      Get.to(
+        () => OtherUserProfileScreen(userId: userId!),
+        transition: Transition.rightToLeft,
+        duration: Duration(milliseconds: 300),
+      );
+    }
     Get.snackbar('Info', 'Perfil de ${feedItem.user.username ?? "usuário"}');
   }
 
@@ -335,7 +364,8 @@ class EnhancedFeedItemCard extends StatelessWidget {
           TextButton(
             onPressed: () {
               Get.back();
-              Get.snackbar('Sucesso', 'Denúncia enviada. Obrigado pelo feedback!');
+              Get.snackbar(
+                  'Sucesso', 'Denúncia enviada. Obrigado pelo feedback!');
             },
             child: Text('Denunciar'),
           ),
@@ -355,32 +385,49 @@ class EnhancedFeedItemCard extends StatelessWidget {
 
   IconData _getCategoryIcon() {
     switch (feedItem.item.category?.icon) {
-      case 'folder': return Icons.folder;
-      case 'favorite': return Icons.favorite;
-      case 'star': return Icons.star;
-      case 'book': return Icons.book;
-      case 'movie': return Icons.movie;
-      case 'music_note': return Icons.music_note;
-      case 'sports_soccer': return Icons.sports_soccer;
-      case 'directions_car': return Icons.directions_car;
-      case 'home': return Icons.home;
-      case 'work': return Icons.work;
-      case 'school': return Icons.school;
-      case 'restaurant': return Icons.restaurant;
-      case 'shopping_bag': return Icons.shopping_bag;
-      case 'flight': return Icons.flight;
-      case 'camera': return Icons.camera;
-      case 'palette': return Icons.palette;
-      default: return Icons.folder;
+      case 'folder':
+        return Icons.folder;
+      case 'favorite':
+        return Icons.favorite;
+      case 'star':
+        return Icons.star;
+      case 'book':
+        return Icons.book;
+      case 'movie':
+        return Icons.movie;
+      case 'music_note':
+        return Icons.music_note;
+      case 'sports_soccer':
+        return Icons.sports_soccer;
+      case 'directions_car':
+        return Icons.directions_car;
+      case 'home':
+        return Icons.home;
+      case 'work':
+        return Icons.work;
+      case 'school':
+        return Icons.school;
+      case 'restaurant':
+        return Icons.restaurant;
+      case 'shopping_bag':
+        return Icons.shopping_bag;
+      case 'flight':
+        return Icons.flight;
+      case 'camera':
+        return Icons.camera;
+      case 'palette':
+        return Icons.palette;
+      default:
+        return Icons.folder;
     }
   }
 
   String _formatTime(DateTime? dateTime) {
     if (dateTime == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inMinutes < 1) {
       return 'Agora';
     } else if (difference.inHours < 1) {
