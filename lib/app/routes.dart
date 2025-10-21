@@ -9,6 +9,8 @@ import '../features/profile/screens/profile_screen.dart';
 import '../features/notifications/screens/notifications_screen.dart';
 import '../features/discovery/screens/discovery_screen.dart';
 import '../features/payments/screens/payment_screen.dart';
+import '../features/profile/screens/other_user_profile_screen.dart';
+
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -19,6 +21,7 @@ class AppRoutes {
   static const String categoryDetail = '/category-detail';
   static const String feed = '/feed';
   static const String profile = '/profile';
+  static const String userProfile = '/user-profile';
   static const String notifications = '/notifications';
   static const String discovery = '/discovery';
   static const String payment = '/payment';
@@ -28,43 +31,49 @@ class AppRoutes {
   static List<GetPage> pages = [
     GetPage(
       name: login,
-      page: () => LoginScreen(),
+      page: () => const LoginScreen(),
     ),
     GetPage(
       name: home,
-      page: () => HomeScreen(),
+      page: () => const HomeScreen(),
     ),
     GetPage(
       name: addItem,
-      page: () => AddItemScreen(),
+      page: () => const AddItemScreen(),
     ),
     GetPage(
       name: addCategory,
-      page: () => AddCategoryScreen(),
+      page: () => const AddCategoryScreen(),
     ),
     GetPage(
       name: categoryDetail,
-      page: () => CategoryDetailScreen(),
+      page: () => const CategoryDetailScreen(),
     ),
     GetPage(
       name: feed,
-      page: () => EnhancedFeedScreen(),
+      page: () => const EnhancedFeedScreen(),
     ),
     GetPage(
       name: profile,
-      page: () => ProfileScreen(),
+      page: () => const ProfileScreen(),
+    ),
+    GetPage(
+      name: userProfile,
+      page: () => OtherUserProfileScreen(
+        userId: Get.parameters['userId'] ?? '',
+      ),
     ),
     GetPage(
       name: notifications,
-      page: () => NotificationsScreen(),
+      page: () => const NotificationsScreen(),
     ),
     GetPage(
       name: discovery,
-      page: () => DiscoveryScreen(),
+      page: () => const DiscoveryScreen(),
     ),
     GetPage(
       name: payment,
-      page: () => PaymentScreen(),
+      page: () => const PaymentScreen(),
     ),
   ];
 }
