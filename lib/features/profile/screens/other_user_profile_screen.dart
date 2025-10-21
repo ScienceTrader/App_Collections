@@ -1,19 +1,23 @@
+// ============================================
+// FILE: lib/features/profile/screens/other_user_profile_screen.dart
+// ============================================
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../shared/models/user_model.dart';
 import '../../../shared/models/item_model.dart';
 import '../../social/controllers/social_controller.dart';
-import '../../auth/controllers/auth_controller.dart';
+//import '../../auth/controllers/auth_controller.dart';
 import '../../collections/widgets/item_card.dart';
 
 class OtherUserProfileScreen extends StatefulWidget {
   final String userId;
 
-  const OtherUserProfileScreen({Key? key, required this.userId})
-      : super(key: key);
+  const OtherUserProfileScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   _OtherUserProfileScreenState createState() => _OtherUserProfileScreenState();
@@ -27,7 +31,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
   final _followersCount = 0.obs;
   final _followingCount = 0.obs;
   final _itemsCount = 0.obs;
-
+  
   late TabController _tabController;
 
   @override
@@ -42,7 +46,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
   Future<void> _loadUserProfile() async {
     try {
       _isLoading.value = true;
-
+      
       final profileData = await SupabaseService.getUserProfile(widget.userId);
       if (profileData != null) {
         _userProfile.value = UserModel.fromJson(profileData);
@@ -56,11 +60,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
 
   Future<void> _loadUserItems() async {
     try {
-      final items = await SupabaseService.getItems(
-        userId: widget.userId,
-      );
-
-      // Filtrar apenas itens públicos
+      final items = await SupabaseService.getItems(userId: widget.userId);
       _userItems.value = items.where((item) => item.isPublic).toList();
     } catch (e) {
       Get.snackbar('Erro', 'Falha ao carregar itens: ${e.toString()}');
@@ -69,12 +69,9 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
 
   Future<void> _loadUserStats() async {
     try {
-      _followersCount.value =
-          await SupabaseService.getFollowersCount(widget.userId);
-      _followingCount.value =
-          await SupabaseService.getFollowingCount(widget.userId);
-      _itemsCount.value =
-          await SupabaseService.getUserItemsCount(widget.userId);
+      _followersCount.value = await SupabaseService.getFollowersCount(widget.userId);
+      _followingCount.value = await SupabaseService.getFollowingCount(widget.userId);
+      _itemsCount.value = await SupabaseService.getUserItemsCount(widget.userId);
     } catch (e) {
       print('Erro ao carregar estatísticas: $e');
     }
@@ -109,7 +106,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
 
         return CustomScrollView(
           slivers: [
-            // App Bar with User Header
             SliverAppBar(
               expandedHeight: 300,
               pinned: true,
@@ -117,22 +113,18 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                 background: _buildUserHeader(user),
               ),
             ),
-
-            // Tab Bar
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverAppBarDelegate(
                 TabBar(
                   controller: _tabController,
                   tabs: [
-                    Tab(text: 'Itens Públicos (${_userItems.length})'),
+                    Tab(text: 'Itens (${_userItems.length})'),
                     Tab(text: 'Sobre'),
                   ],
                 ),
               ),
             ),
-
-            // Tab Content
             SliverFillRemaining(
               child: TabBarView(
                 controller: _tabController,
@@ -166,7 +158,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Avatar
               CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.white,
@@ -177,17 +168,13 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.person, size: 50),
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.person, size: 50),
                         ),
                       )
                     : Icon(Icons.person, size: 50, color: Colors.grey),
               ),
               SizedBox(height: 16),
-
-              // Username
               Text(
                 user.username ?? user.email ?? 'Usuário',
                 style: TextStyle(
@@ -196,7 +183,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                   color: Colors.white,
                 ),
               ),
-
               if (user.bio != null) ...[
                 SizedBox(height: 8),
                 Text(
@@ -210,23 +196,16 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-
               SizedBox(height: 16),
-
-              // Stats
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildStatCard('Itens', _itemsCount.value.toString()),
-                  _buildStatCard(
-                      'Seguidores', _followersCount.value.toString()),
+                  _buildStatCard('Seguidores', _followersCount.value.toString()),
                   _buildStatCard('Seguindo', _followingCount.value.toString()),
                 ],
               ),
-
               SizedBox(height: 16),
-
-              // Follow Button
               _buildFollowButton(user.id!),
             ],
           ),
@@ -268,18 +247,14 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
             : () async {
                 if (isFollowing) {
                   await SocialController.to.unfollowUser(userId);
-                  _followersCount.value =
-                      await SupabaseService.getFollowersCount(userId);
                 } else {
                   await SocialController.to.followUser(userId);
-                  _followersCount.value =
-                      await SupabaseService.getFollowersCount(userId);
                 }
+                _loadUserStats();
               },
         style: ElevatedButton.styleFrom(
           backgroundColor: isFollowing ? Colors.grey : Colors.white,
-          foregroundColor:
-              isFollowing ? Colors.white : Theme.of(context).primaryColor,
+          foregroundColor: isFollowing ? Colors.white : Theme.of(context).primaryColor,
           minimumSize: Size(200, 40),
         ),
         child: isLoading
@@ -334,8 +309,8 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
             final item = _userItems[index];
             return ItemCard(
               item: item,
-              onVisibilityToggle: () {}, // Não permitir alteração
-              onDelete: () {}, // Não permitir exclusão
+              onVisibilityToggle: () {},
+              onDelete: () {},
             );
           },
         ),
@@ -352,10 +327,8 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
           _buildInfoCard(
             'Informações',
             [
-              _buildInfoRow(
-                  Icons.person, 'Usuário', user.username ?? 'Não informado'),
-              _buildInfoRow(
-                  Icons.email, 'Email', user.email ?? 'Não informado'),
+              _buildInfoRow(Icons.person, 'Usuário', user.username ?? 'Não informado'),
+              _buildInfoRow(Icons.email, 'Email', user.email ?? 'Não informado'),
               if (user.bio != null)
                 _buildInfoRow(Icons.info, 'Biografia', user.bio!),
               _buildInfoRow(
@@ -365,21 +338,15 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
               ),
             ],
           ),
-
           SizedBox(height: 16),
-
           _buildInfoCard(
             'Estatísticas',
             [
-              _buildInfoRow(Icons.inventory, 'Total de Itens',
-                  _itemsCount.value.toString()),
-              _buildInfoRow(
-                  Icons.people, 'Seguidores', _followersCount.value.toString()),
-              _buildInfoRow(Icons.person_add, 'Seguindo',
-                  _followingCount.value.toString()),
+              _buildInfoRow(Icons.inventory, 'Total de Itens', _itemsCount.value.toString()),
+              _buildInfoRow(Icons.people, 'Seguidores', _followersCount.value.toString()),
+              _buildInfoRow(Icons.person_add, 'Seguindo', _followingCount.value.toString()),
             ],
           ),
-
           if (user.subscriptionTier == 'premium') ...[
             SizedBox(height: 16),
             Card(
@@ -416,10 +383,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
               ),
             ),
           ],
-
           SizedBox(height: 16),
-
-          // Action Buttons
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
@@ -428,16 +392,13 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
               label: Text('Compartilhar Perfil'),
             ),
           ),
-
           SizedBox(height: 8),
-
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () => _reportUser(user),
               icon: Icon(Icons.flag, color: Colors.red),
-              label: Text('Denunciar Usuário',
-                  style: TextStyle(color: Colors.red)),
+              label: Text('Denunciar Usuário', style: TextStyle(color: Colors.red)),
             ),
           ),
         ],
@@ -454,10 +415,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
           children: [
             Text(
               title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 12),
             ...children,
@@ -479,21 +437,9 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
+                Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
                 SizedBox(height: 2),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
@@ -504,10 +450,10 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'Não informado';
-
+    
     final now = DateTime.now();
     final difference = now.difference(date);
-
+    
     if (difference.inDays < 30) {
       return '${difference.inDays} dias atrás';
     } else if (difference.inDays < 365) {
@@ -521,35 +467,15 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
 
   void _shareProfile(UserModel user) {
     final profileUrl = 'https://mycollection.app/user/${user.id}';
-    final message =
-        'Confira o perfil de ${user.username ?? "este usuário"} no My Collection!\n$profileUrl';
-
-    // Usar share_plus package
+    final message = 'Confira o perfil de ${user.username ?? "este usuário"} no My Collection!\n$profileUrl';
     Share.share(message);
-
-    Get.snackbar(
-      'Compartilhar',
-      'Compartilhe o perfil com seus amigos',
-      duration: Duration(seconds: 2),
-    );
   }
 
   void _reportUser(UserModel user) {
     Get.dialog(
       AlertDialog(
         title: Text('Denunciar Usuário'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Por que você está denunciando este usuário?'),
-            SizedBox(height: 16),
-            Text(
-              'Sua denúncia será analisada pela nossa equipe.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
-        ),
+        content: Text('Tem certeza que deseja denunciar este usuário?'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
@@ -557,7 +483,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
           ),
           TextButton(
             onPressed: () {
-              // TODO: Implementar lógica de denúncia
               Get.back();
               Get.snackbar(
                 'Denúncia Enviada',
@@ -579,4 +504,27 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen>
     _tabController.dispose();
     super.dispose();
   }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar _tabBar;
+
+  _SliverAppBarDelegate(this._tabBar);
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
 }
