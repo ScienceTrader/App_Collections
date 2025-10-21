@@ -319,26 +319,58 @@ class EnhancedFeedItemCard extends StatelessWidget {
       });
     }
   }
-
+/*void _showUserProfile() {
+  final userId = feedItem.user.id;
+  final currentUserId = AuthController.to.currentUser.value?.id;
+  
+  // Verificar se é o próprio usuário
+  if (userId == currentUserId) {
+    // Navegar para o próprio perfil
+    Get.toNamed(AppRoutes.profile);
+  } else {
+    // Navegar para perfil de outro usuário
+    Get.to(
+      () => OtherUserProfileScreen(userId: userId!),
+      transition: Transition.rightToLeft,
+      duration: Duration(milliseconds: 300),
+    );
+  }
+}*/
   void _showUserProfile() {
-    // TODO: Navigate to user profile
-    final userId = feedItem.user.id;
-    final currentUserId = AuthController.to.currentUser.value?.id;
+    try {
+      final userId = feedItem.user.id;
+      
+      // Validar se o ID do usuário existe
+      if (userId == null || userId.isEmpty) {
+        Get.snackbar(
+          'Erro',
+          'Perfil do usuário não disponível',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
 
-    // Verificar se é o próprio usuário
-    if (userId == currentUserId) {
-      // Navegar para o próprio perfil
-      Get.toNamed(AppRoutes.profile);
-    } else {
-      // Navegar para perfil de outro usuário
-      Get.to(
-        () => OtherUserProfileScreen(userId: userId!),
-        transition: Transition.rightToLeft,
-        duration: Duration(milliseconds: 300),
+      final currentUserId = AuthController.to.currentUser.value?.id;
+      
+      // Verificar se é o próprio usuário
+      if (userId == currentUserId) {
+        Get.toNamed(AppRoutes.profile);
+      } else {
+        Get.to(
+          () => OtherUserProfileScreen(userId: userId),
+          transition: Transition.rightToLeft,
+          duration: Duration(milliseconds: 300),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Erro',
+        'Não foi possível abrir o perfil',
+        snackPosition: SnackPosition.BOTTOM,
       );
     }
-    Get.snackbar('Info', 'Perfil de ${feedItem.user.username ?? "usuário"}');
   }
+
 
   void _handleMenuAction(String action) {
     switch (action) {
