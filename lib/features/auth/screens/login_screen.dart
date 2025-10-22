@@ -4,6 +4,8 @@ import '../controllers/auth_controller.dart';
 import '../../../shared/themes/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);  // ← Adicione const
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -43,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           child: Column(
             children: [
               // Header
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(vertical: 40),
                 child: Column(
                   children: [
@@ -62,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       ),
                     ),
                     Text(
-                      'Organize sua vida, compartilhe suas paixões',
+                      'Organize suas coleções, compartilhe suas paixões',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.white70,
@@ -75,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               // Form Container
               Expanded(
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
@@ -83,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     children: [
                       // Tab Bar
                       Container(
-                        margin: EdgeInsets.all(16),
+                        margin: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
@@ -96,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           ),
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.grey.shade600,
-                          tabs: [
+                          tabs: const [
                             Tab(text: 'Entrar'),
                             Tab(text: 'Cadastrar'),
                           ],
@@ -128,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     return Form(
       key: _formKey,
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -140,12 +142,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 color: Colors.grey.shade800,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Entre em sua conta para continuar',
               style: TextStyle(color: Colors.grey.shade600),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             // Email Field
             TextFormField(
@@ -153,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Email',
-                prefixIcon: Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Icons.email_outlined),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -168,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 return null;
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Password Field
             TextFormField(
@@ -176,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 labelText: 'Senha',
-                prefixIcon: Icon(Icons.lock_outline),
+                prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                   onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -192,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 return null;
               },
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Login Button
             Obx(() => ElevatedButton(
@@ -200,17 +202,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: AuthController.to.isLoading.value
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text('Entrar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Entrar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             )),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Forgot Password
             TextButton(
@@ -218,10 +220,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 // TODO: Implement forgot password
                 Get.snackbar('Info', 'Funcionalidade em desenvolvimento');
               },
-              child: Text('Esqueceu sua senha?'),
+              child: const Text('Esqueceu sua senha?'),
             ),
 
-            Spacer(),
+            const Spacer(),
 
             // Social Login
             Text(
@@ -229,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey.shade600),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -238,27 +240,27 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       // TODO: Implement Google login
                       Get.snackbar('Info', 'Login com Google em desenvolvimento');
                     },
-                    icon: Icon(Icons.g_mobiledata, color: Colors.red),
-                    label: Text('Google'),
+                    icon: const Icon(Icons.g_mobiledata, color: Colors.red),
+                    label: const Text('Google'),
                     style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
                       // TODO: Implement Apple login
                       Get.snackbar('Info', 'Login com Apple em desenvolvimento');
                     },
-                    icon: Icon(Icons.apple, color: Colors.black),
-                    label: Text('Apple'),
+                    icon: const Icon(Icons.apple, color: Colors.black),
+                    label: const Text('Apple'),
                     style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -276,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   Widget _buildSignUpForm() {
     return Form(
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -288,19 +290,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 color: Colors.grey.shade800,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               'Junte-se à nossa comunidade',
               style: TextStyle(color: Colors.grey.shade600),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             // Username Field
             TextFormField(
               controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'Nome de usuário',
-                prefixIcon: Icon(Icons.person_outline),
+                prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -315,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 return null;
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Email Field
             TextFormField(
@@ -323,7 +325,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Email',
-                prefixIcon: Icon(Icons.email_outlined),
+                prefixIcon: const Icon(Icons.email_outlined),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -338,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 return null;
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Password Field
             TextFormField(
@@ -346,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               obscureText: _obscurePassword,
               decoration: InputDecoration(
                 labelText: 'Senha',
-                prefixIcon: Icon(Icons.lock_outline),
+                prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                   onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -365,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 return null;
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Confirm Password Field
             TextFormField(
@@ -373,7 +375,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               obscureText: _obscureConfirmPassword,
               decoration: InputDecoration(
                 labelText: 'Confirmar senha',
-                prefixIcon: Icon(Icons.lock_outline),
+                prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
                   onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
@@ -392,7 +394,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 return null;
               },
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Sign Up Button
             Obx(() => ElevatedButton(
@@ -400,17 +402,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: AuthController.to.isLoading.value
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text('Criar conta', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Criar conta', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             )),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Terms and Privacy
             Text(
