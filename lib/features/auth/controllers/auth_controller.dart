@@ -7,13 +7,11 @@ import 'package:my_collection_app/core/services/supabase_service.dart';
 import '../../profile/controllers/profile_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-
 class AuthController extends GetxController {
   static AuthController get to => Get.find();
 
   static const String _tag = 'AuthController';
   bool get isAuthenticated => currentUser.value != null;
-
 
   final _supabase = Supabase.instance.client;
   final currentUser = Rxn<User>();
@@ -56,7 +54,27 @@ class AuthController extends GetxController {
 
   // Versão pública também deve ser assíncrona
   Future<void> checkAuthState() async {
-    await _checkAuthState();
+    try {
+      isLoading.value = true;
+      final session = _supabase.auth.currentSession;
+
+      if (session != null) {
+        currentUser.value = session.user;
+        await _loadUserProfile();
+
+        // Navegar para home se autenticado
+        Get.offAllNamed(AppRoutes.home);
+      } else {
+        // Navegar para login se não autenticado
+        Get.offAllNamed(AppRoutes.login);
+      }
+    } catch (e) {
+      Logger.error('Erro ao verificar estado de autenticação: $e', tag: _tag);
+      // Em caso de erro, ir para login
+      Get.offAllNamed(AppRoutes.login);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> signInWithEmail(String email, String password) async {
@@ -121,17 +139,17 @@ class AuthController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
-      
+
       final currentUser = this.currentUser.value;
       if (currentUser == null) return;
 
       // Preparar dados para atualização
       final updates = <String, dynamic>{};
-      
+
       if (email != null && email != currentUser.email) {
         updates['email'] = email;
       }
-      
+
       if (username != null) {
         updates['data'] = {
           ...currentUser.userMetadata ?? {},
@@ -195,6 +213,4 @@ class AuthController extends GetxController {
       Get.snackbar('Erro', 'Falha ao fazer logout: ${e.toString()}');
     }
   }
-
-  
 }
